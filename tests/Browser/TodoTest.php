@@ -17,10 +17,10 @@ class TodoTest extends DuskTestCase
         $this->browse(function ($browser) {
             $browser->visit('register')
                     ->type('name', 'Ahmed Khan')
-                    ->type('email', 'tessa6@cloudways.com')
+                    ->type('email', 'tessa9@cloudways.com')
                     ->type('password', 'ahmedkhan')
                     ->type('password_confirmation', 'ahmedkhan')
-                    ->type('userimage', 'C:\Users\ahmed.khan\Pictures\testominal\tesa.jpg')
+                    ->attach('userimage', 'C:\Users\ahmed.khan\Pictures\testominal\tesa.jpg')
                     ->press('Register')
                     ->assertPathIs('/todoapplaravel/public/todo');
         });
