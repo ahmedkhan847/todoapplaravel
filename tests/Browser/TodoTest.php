@@ -25,22 +25,6 @@ class TodoTest extends DuskTestCase
                     ->assertPathIs('/todoapplaravel/public/todo');
         });
     }
-
-    /**
-     * Login test.
-     *
-     * @return void
-     */
-    public function testLogin()
-    {
-        $this->browse(function ($browser) {
-            $browser->visit('login')
-                    ->type('email', 'tessa@cloudways.com')
-                    ->type('password', 'ahmedkhan')
-                    ->press('Login')
-                    ->assertPathIs('/todoapplaravel/public/todo');
-        });
-    }
   
 
    /**
@@ -129,6 +113,22 @@ class TodoTest extends DuskTestCase
             $browser->visit('todo')
                     ->clickLink('Logout')
                     ->assertPathIs('/todoapplaravel/public/login');
+        });
+    }
+
+    /**
+     * Login test.
+     *
+     * @return void
+     */
+    public function testLogin()
+    {
+        $this->browse(function ($browser) {
+            $browser->visit('login')
+                    ->type('email', 'tessa@cloudways.com')
+                    ->type('password', 'ahmedkhan')
+                    ->press('Login')
+                    ->assertPathIs('/todoapplaravel/public/todo');
         });
     }
 
