@@ -7,7 +7,7 @@
     @if($todos != false)
           @foreach ($todos as $todo)
 
-    <li class="list-group-item"><a class="secondary-content" href="{{url('/todo/'.$todo->id)}}"><span class="glyphicon glyphicon-triangle-right"></span></a><a class="secondary-content" href="{{url('/todo/'.$todo->id).'/edit'}}"><span class="glyphicon glyphicon-pencil"></span></a><a href="#" class="secondary-content" onclick="event.preventDefault();
+    <li class="list-group-item"><a id="view{{$todo->id}}" class="secondary-content" href="{{url('/todo/'.$todo->id)}}"><span class="glyphicon glyphicon-triangle-right"></span></a><a id="edit{{$todo->id}}" class="secondary-content" href="{{url('/todo/'.$todo->id).'/edit'}}"><span class="glyphicon glyphicon-pencil"></span></a><a id="delete{{$todo->id}}" href="#" class="secondary-content" onclick="event.preventDefault();
                                             document.getElementById('delete-form').submit();"><span class="glyphicon glyphicon-trash"></span></a><form id="delete-form" action="{{url('/todo/'.$todo->id)}}" method="POST" style="display: none;">
                          {{ method_field('DELETE') }}{{ csrf_field() }}
                             </form> {{$todo->todo}} 
