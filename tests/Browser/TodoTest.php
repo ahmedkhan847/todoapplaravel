@@ -16,11 +16,11 @@ class TodoTest extends DuskTestCase
     {
         $this->browse(function ($browser) {
             $browser->visit('register')
-                    ->type('name', 'Ahmed Khan')
-                    ->type('email', 'tessa9@cloudways.com')
+                    ->type('name', 'Tayor Otwell')
+                    ->type('email', 'taylor@laravel.com')
                     ->type('password', 'ahmedkhan')
                     ->type('password_confirmation', 'ahmedkhan')
-                    ->attach('userimage', 'C:\Users\ahmed.khan\Pictures\testominal\tesa.jpg')
+                    ->attach('userimage', 'C:\Users\ahmed.khan\Downloads\CreatingToDoApplicationinLaravel5.4CreatingAuthToDoViewsRoutesandModifyingController\images\taylor.jpg')
                     ->press('Register')
                     ->assertPathIs('/todoapplaravel/public/todo');
         });
@@ -56,13 +56,13 @@ class TodoTest extends DuskTestCase
             $browser->visit('todo')
                     ->assertVisible('#view5')
                     ->visit(
-                        $browser->attribute('#view5', 'href')
+                        $browser->attribute('#view1', 'href')
                     )
-                    ->assertPathIs('/todoapplaravel/public/todo/5')
+                    ->assertPathIs('/todoapplaravel/public/todo/1')
                     ->clickLink('Edit')
                     ->type('description', 'Testing it with dusk again')
                     ->press('Update')
-                    ->assertPathIs('/todoapplaravel/public/todo/5');
+                    ->assertPathIs('/todoapplaravel/public/todo/1');
         });
     }
 
@@ -81,7 +81,7 @@ class TodoTest extends DuskTestCase
                     )
                     ->type('description', 'Testing it with dusk again')
                     ->press('Update')
-                    ->assertPathIs('/todoapplaravel/public/todo/5');
+                    ->assertPathIs('/todoapplaravel/public/todo/1');
         });
     }
 
@@ -96,7 +96,7 @@ class TodoTest extends DuskTestCase
             $browser->visit('todo')
                     ->assertVisible('#delete5')
                     ->visit(
-                        $browser->attribute('#delete5', 'href')
+                        $browser->attribute('#delete1', 'href')
                     )
                     ->assertPathIs('/todoapplaravel/public/todo');
         });
