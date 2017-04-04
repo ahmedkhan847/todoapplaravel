@@ -54,7 +54,7 @@ class TodoTest extends DuskTestCase
     {
         $this->browse(function ($browser) {
             $browser->visit('todo')
-                    ->assertVisible('#view5')
+                    ->assertVisible('#view1')
                     ->visit(
                         $browser->attribute('#view1', 'href')
                     )
@@ -75,9 +75,9 @@ class TodoTest extends DuskTestCase
     {
         $this->browse(function ($browser) {
             $browser->visit('todo')
-                    ->assertVisible('#edit5')
+                    ->assertVisible('#edit1')
                     ->visit(
-                        $browser->attribute('#edit5', 'href')
+                        $browser->attribute('#edit1', 'href')
                     )
                     ->type('description', 'Testing it with dusk again')
                     ->press('Update')
@@ -94,7 +94,7 @@ class TodoTest extends DuskTestCase
     {
         $this->browse(function ($browser) {
             $browser->visit('todo')
-                    ->assertVisible('#delete5')
+                    ->assertVisible('#delete1')
                     ->visit(
                         $browser->attribute('#delete1', 'href')
                     )
