@@ -70,7 +70,8 @@ class TodoController extends Controller
     public function store(Request $request)
     {
         $this->validator($request->all())->validate();
-         if(Auth::user()->todo()->Create($request->all())){
+
+        if(Auth::user()->todo()->Create($request->all())){
             return $this->index();
         }
     }
