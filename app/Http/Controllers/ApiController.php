@@ -4,88 +4,73 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\TodoRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 use App\Todo;
+use App\User;
 
 class ApiController extends Controller
 {
     public function accessToken(Request $request)
     {
-        $this->validate($request, [
-        'email' => 'required',
-        'password' => 'required',
-        ]);
-
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            // Authentication passed...
-
-            return ["accessToken" => Auth::user()->createToken('Todo App')->accessToken];
+        $validate = $this->validations($request,"login");
+        if($validate["error"]){
+            return $this->prepareResult(false, [], $validate['errors'],"Error while validating user"); 
         }
+        $user = User::where("email",$request->email)->first();
+        if($user){
+            if (Hash::check($request->password,$user->password)) {
+                return $this->prepareResult(true, ["accessToken" => $user->createToken('Todo App')->accessToken], [],"User Verified");
+            }else{
+                return $this->prepareResult(false, [], ["password" => "Wrong passowrd"],"Password not matched");  
+            }
+        }else{
+            return $this->prepareResult(false, [], ["email" => "Unable to find user"],"User not found");
+        }
+        
     }
 
     /**
      * Get a validator for an incoming Todo request.
      *
-     * @param  array  $request
+     * @param  \Illuminate\Http\Request  $request
+     * @param  $type
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator($request,$update = false)
-    {
-        $error = false;
+    public function validations($request,$type){
         $errors = [];
-        if($update){
-            if(!isset($request['todo']) && !isset($request['description']) && !isset($request['category'])){
-                $errors = "nothing to update";
-            }
-
-            if(isset($request['todo'])){
-                if (empty($request['todo']) || $request['todo'] == '') {
-                    $error = true;
-                    array_push($errors, ["todo" => "Cannot be empty or less than 10"]);
-                    
-                }
-            }
-
-            if(isset($request['description'])){
-                if (empty($request['description']) || $request['description'] == '') {
-                    $error = true;
-                    array_push($errors, ["description" => "Cannot be empty or less than 10"]);
-                    
-                }
-            }
-
-            if(isset($request['category'])){
-                if (empty($request['category']) || $request['category'] == '') {
-                    $error = true;
-                    array_push($errors, ["category" => "Required"]);
-                    
-                }
-            }
-            
-        }else{
-
-            if (empty($request['todo']) || !isset($request['todo']) || $request['todo'] == '') {
+        $error = false;
+        if($type == "login"){
+            $validator = Validator::make($request->all(),[
+            'email' => 'required|email|max:255',
+            'password' => 'required',
+            ]);
+            if($validator->fails()){
                 $error = true;
-                array_push($errors, ["todo" => "Cannot be empty or less than 10"]);
+                $errors = $validator->errors();
             }
-
-            if (empty($request['description']) || !isset($request['description']) || $request['description'] == '') {
+        }elseif($type == "create todo"){
+            $validator = Validator::make($request->all(),[
+                'todo' => 'required',
+                'description' => 'required',
+                'category' => 'required'
+            ]);
+            if($validator->fails()){
                 $error = true;
-                array_push($errors, ["description" => "Cannot be empty or less than 10"]);
+                $errors = $validator->errors();
             }
-            
-            if (empty($request['category']) || !isset($request['category']) || $request['category'] == '') {
-                array_push($errors, ["category" => "Required"]); 
-                $error = true;      
+        }elseif($type == "update todo"){
+            $validator = Validator::make($request->all(),[
+                'todo' => 'filled',
+                'description' => 'filled',
+                'category' => 'filled'
+            ]);
+            if($validator->fails()){
+                $error = true;
+                $errors = $validator->errors();
             }
         }
-        
-        return [
-            'error' => $error,
-            'errors' => $errors
-            ];
-    
+        return ["error" => $error,"errors"=>$errors];
     }
 
     /**
@@ -107,7 +92,6 @@ class ApiController extends Controller
      */
     public function index(Request $request)
     {
-        //
         return $this->prepareResult(true, $request->user()->todo()->get(), [],"All user todos");
     }
 
@@ -134,7 +118,7 @@ class ApiController extends Controller
      */
     public function store(Request $request)
     {
-        $error = $this->validator($request->all());
+        $error = $this->validations($request,"create todo");
         if ($error['error']) {
             return $this->prepareResult(false, [], $error['errors'],"Error in creating todo");
         } else {
@@ -153,7 +137,7 @@ class ApiController extends Controller
     public function update(Request $request, Todo $todo)
     {
         if($todo->user_id == $request->user()->id){
-            $error =  $this->validator($request->all(),true);
+           $error = $this->validations($request,"update todo");
             if ($error['error']) {
                 return $this->prepareResult(false, [], $error['errors'],"error in updating data");
             } else {
@@ -175,7 +159,7 @@ class ApiController extends Controller
     {
         if($todo->user_id == $request->user()->id){
             if ($todo->delete()) {
-                return $this->prepareResult(true, [], []);
+                return $this->prepareResult(true, [], [],"Todo deleted");
             }
         }else{
             return $this->prepareResult(false, [], "unauthorized","You are not authenticated to delete this todo");
